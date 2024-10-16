@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import BaseLayout from "../layouts/baseLayout";
 import HomePage from "../pages/navigation/homePage";
 import SignIn from "../pages/authentication/signIn";
+import ErrorBoundary from "../components/errorMessage";
 
 export const routes = createBrowserRouter([
     {
@@ -16,10 +17,7 @@ export const routes = createBrowserRouter([
     },
     {
         path: '/signIn',
-        element: <SignIn/>
+        element: <SignIn/>,
+        // errorElement: <ErrorBoundary/>
     },
-    // {
-    //     path: '/*',
-    //     element: <h1>Page not found</h1>
-    // }
 ])
