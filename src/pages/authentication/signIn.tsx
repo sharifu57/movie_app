@@ -1,15 +1,47 @@
-import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
+import { GoogleLogin } from "@react-oauth/google";
 import InputForm from "../../components/forms/inputForm";
+import { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export default function SignIn() {
+  const [user, setUser] = useState<any>(null)
+
   try {
-    const handleOnSuccessLogin = (response: any) => {
-      console.log("-----success login: " + response);
-    };
+    const handleOnSuccessLogin = async (response: any) => {
+      console.log("-----success login: " + response.credential);
   
-    const handleOnErrorLogin = () => {
-      console.log("-----error login");
+      // Use the access token to fetch user details
+      if (response.credential) {
+        const decodedToken = jwtDecode(response.credential);
+        try {
+          const res = await fetch(
+            `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${decodedToken}`,
+            {
+              headers: {
+                Authorization: `Bearer ${decodedToken}`,
+                Accept: "application/json",
+              },
+            }
+          );
+          const userInfo = await res.json();
+          console.log("Fetched user info:", userInfo);
+          
+          // Store user info in local state and local storage
+          setUser(userInfo);
+          localStorage.setItem("user", JSON.stringify(userInfo));
+        } catch (error) {
+          console.error("Error fetching user info:", error);
+        }
+      }
     };
+
+    useEffect(()=> {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    })
+  
  
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -73,7 +105,9 @@ export default function SignIn() {
             <div className="flex items-center justify-center mt-4">
               <GoogleLogin
                 onSuccess={handleOnSuccessLogin}
-                onError={handleOnErrorLogin}
+                onError={()=> {
+                  console.log("===failed")
+                }}
               />
             </div>
 
