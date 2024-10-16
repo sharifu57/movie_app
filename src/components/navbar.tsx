@@ -1,22 +1,26 @@
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { defaultColors } from "../utils/colors";
 
 export default function Navbar() {
-  const navigate = useNavigate()
+  const primaryColor = defaultColors.primaryColor;
+  const secondaryColor = defaultColors.secondaryColor;
+  const navigate = useNavigate();
   const navLinks = [
     { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
-    { href: "/docs", label: "Docs" },
+    { href: "/release", label: "Release" },
     { href: "/blog", label: "Blog" },
     { href: "/careers", label: "Careers" },
   ];
 
-  const handleSignInClick=()=> {
-    navigate('/signIn')
-  } 
+  const handleSignInClick = () => {
+    navigate("/signIn");
+  };
 
   return (
-    <nav className="bg-white border-gray-200">
+    <nav
+      className="bg-white border-gray-200 dark:border-gray-700"
+      style={{ backgroundColor: primaryColor }}
+    >
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a
           href="https://flowbite.com/"
@@ -34,10 +38,9 @@ export default function Navbar() {
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
           <button
             type="button"
+            className="text-white border border-white focus:ring-6 focus:outline-none font-medium md:rounded-2xl text-sm px-5 py-2 text-center me-2 mb-2 dark:border-white dark:text-white-500"
+            style={{ borderColor: secondaryColor, color: secondaryColor }}
             onClick={handleSignInClick}
-            data-modal-target="popup-modal"
-            data-modal-toggle="popup-modal"
-            className="text-white bg-blue-700  hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Sign In
           </button>
@@ -70,17 +73,20 @@ export default function Navbar() {
           className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
           id="navbar-cta"
         >
-          <ul className="flex flex-col font-small p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white ">
+          <ul className="flex flex-col font-small p-4 md:p-0 mt-4 border rounded-lg  md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
             {navLinks.map((link) => {
               return (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="block font-medium py-2 px-3 md:p-0 text-dark bg-blue-700 rounded md:bg-transparent"
-                    aria-current="page"
+                  <NavLink
+                    to={link.href}
+                    className={({ isActive, isPending }) =>
+                      `block font-small py-2 px-3 md:p-0 text-dark rounded md:bg-transparent ${
+                        isActive ? "text-white font-bold" : "text-gray-400"
+                      } ${isPending ? "opacity-50" : ""}`
+                    }
                   >
                     {link.label}
-                  </a>
+                  </NavLink>
                 </li>
               );
             })}
