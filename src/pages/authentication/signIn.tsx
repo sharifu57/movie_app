@@ -1,34 +1,25 @@
-import { GoogleLogin } from "@react-oauth/google";
 import InputForm from "../../components/forms/inputForm";
 import { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
 import FacebookLogin from "react-facebook-login";
+import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
   const appId = "509962481906337";
   const [user, setUser] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate()
 
   const handleFacebookCallback = (response: any) => {
-    console.log("=======response" + response)
+    console.log(response)
+    
+    if (response['accessToken']) {
+      setUser(response);
+      localStorage.setItem("user", JSON.stringify(response));
+      navigate('/dashboard');
+    }
     if (response?.status === "unknown") {
       console.error("Sorry!", "Something went wrong with facebook Login.");
       return;
-    }
-  };
-
-  const handleOnSuccessLogin = async (response: any) => {
-    try {
-      console.log("-----success login: " + response.credential);
-
-      const decodedToken: any = jwtDecode(response.credential);
-      console.log("-----decoded token: " + decodedToken);
-
-      setUser(decodedToken);
-      localStorage.setItem("user", JSON.stringify(decodedToken));
-    } catch (e: any) {
-      setError(e.message);
-      console.error("Error decoding token:", e);
     }
   };
 
@@ -37,10 +28,6 @@ export default function SignIn() {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-
-    console.log("=======user");
-    console.log(user);
-    console.log("=====end user");
   }, []);
 
   return (
@@ -103,38 +90,19 @@ export default function SignIn() {
           </button>
 
           <div className="flex items-center justify-center mt-4">
-            {/* {!user ? (
-              <div>
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                <GoogleLogin
-                  onSuccess={handleOnSuccessLogin}
-                  onError={() => {
-                    console.log("===failed");
-                  }}
-                />
-              </div>
-            ) : (
-              <div>{user}</div>
-            )} */}
-
             <div>
               {error && <p style={{ color: "red" }}>{error}</p>}
-              {/* <GoogleLogin
-                  onSuccess={handleOnSuccessLogin}
-                  onError={() => {
-                    console.log("===failed");
-                  }}
-                /> */}
+
               <div>
-              {error && <p style={{ color: "red" }}>{error}</p>}
-              <FacebookLogin
-                appId={appId}
-                autoLoad={false}
-                fields="name,email,picture"
-                callback={handleFacebookCallback}
-                buttonStyle={{ padding: "6px" }}
-              />
-            </div>
+                {error && <p style={{ color: "red" }}>{error}</p>}
+                <FacebookLogin
+                  appId={appId}
+                  autoLoad={false}
+                  fields="name,email,picture"
+                  callback={handleFacebookCallback}
+                  buttonStyle={{ padding: "6px" }}
+                />
+              </div>
             </div>
           </div>
 
