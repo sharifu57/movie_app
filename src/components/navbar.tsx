@@ -1,9 +1,11 @@
 import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { defaultColors } from "../utils/colors";
 
 export default function Navbar() {
   const primaryColor = defaultColors.primaryColor;
   const secondaryColor = defaultColors.secondaryColor;
+  const [isScrolled, setIsScrolled] = useState(false); 
   const navigate = useNavigate();
   const navLinks = [
     { href: "/", label: "Home" },
@@ -12,16 +14,32 @@ export default function Navbar() {
     { href: "/careers", label: "Careers" },
   ];
 
+  
   const handleSignInClick = () => {
     navigate("/signIn");
   };
 
+  const handleScroll = () => {
+    const offset = window.scrollY; 
+    if (offset > 50) {
+      setIsScrolled(true);
+    } else {
+      setIsScrolled(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <nav
-      className="bg-white border-gray-200 dark:border-gray-700"
-      style={{ backgroundColor: primaryColor }}
+      className={`fixed top-0 left-0 right-0 z-10 transition-all duration-300 ${isScrolled? "bg-black": "bg-transparent"}`}
     >
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <div className="max-w-screen flex flex-wrap items-center justify-between mx-auto p-4 md:px-20">
         <a
           href="https://flowbite.com/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
@@ -31,7 +49,7 @@ export default function Navbar() {
             className="h-8"
             alt="Flowbite Logo"
           />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap ">
+          <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
             Logo
           </span>
         </a>
@@ -61,9 +79,9 @@ export default function Navbar() {
             >
               <path
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
                 d="M1 1h15M1 7h15M1 13h15"
               />
             </svg>
@@ -73,15 +91,15 @@ export default function Navbar() {
           className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
           id="navbar-cta"
         >
-          <ul className="flex flex-col font-small p-4 md:p-0 mt-4 border rounded-lg  md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
+          <ul className="flex flex-col font-small p-4 md:p-0 mt-4 border rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
             {navLinks.map((link) => {
               return (
                 <li key={link.label}>
                   <NavLink
                     to={link.href}
                     className={({ isActive, isPending }) =>
-                      `block font-small py-2 px-3 md:p-0 text-dark rounded md:bg-transparent ${
-                        isActive ? "text-white font-bold" : "text-gray-400"
+                      `block font-small py-2 px-3 md:p-0 text-white rounded md:bg-transparent ${
+                        isActive ? "font-bold" : "text-gray-400"
                       } ${isPending ? "opacity-50" : ""}`
                     }
                   >
