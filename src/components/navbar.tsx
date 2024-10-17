@@ -5,7 +5,10 @@ import { defaultColors } from "../utils/colors";
 export default function Navbar() {
   const primaryColor = defaultColors.primaryColor;
   const secondaryColor = defaultColors.secondaryColor;
-  const [isScrolled, setIsScrolled] = useState(false); 
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [user, setUser] = useState<any>([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+
   const navigate = useNavigate();
   const navLinks = [
     { href: "/", label: "Home" },
@@ -14,13 +17,12 @@ export default function Navbar() {
     { href: "/careers", label: "Careers" },
   ];
 
-  
   const handleSignInClick = () => {
     navigate("/signIn");
   };
 
   const handleScroll = () => {
-    const offset = window.scrollY; 
+    const offset = window.scrollY;
     if (offset > 50) {
       setIsScrolled(true);
     } else {
@@ -28,7 +30,22 @@ export default function Navbar() {
     }
   };
 
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen)
+  }
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem("user");
+    
+  }
+
   useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -37,7 +54,9 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-10 transition-all duration-300 ${isScrolled? "bg-black": "bg-transparent"}`}
+      className={`fixed top-0 left-0 right-0 z-10 transition-all duration-300 ${
+        isScrolled ? "bg-black" : "bg-transparent"
+      }`}
     >
       <div className="max-w-screen flex flex-wrap items-center justify-between mx-auto p-4 md:px-20">
         <a
@@ -54,14 +73,49 @@ export default function Navbar() {
           </span>
         </a>
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          <button
-            type="button"
-            className="text-white border border-white focus:ring-6 focus:outline-none font-medium md:rounded-2xl text-sm px-5 py-2 text-center me-2 mb-2 dark:border-white dark:text-white-500"
-            style={{ borderColor: secondaryColor, color: secondaryColor }}
-            onClick={handleSignInClick}
-          >
-            Sign In
-          </button>
+          {user ? (
+            <div className="relative">
+              <img
+                src={user.picture?.data?.url || "default-avatar-url"}
+                alt="User Avatar"
+                className="w-10 h-10 rounded-full cursor-pointer"
+                onClick={toggleDropdown}
+              />
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg">
+                  <ul className="py-1">
+                    <li>
+                      <a
+                        href="/profile"
+                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      >
+                        Profile
+                      </a>
+                    </li>
+                    <li>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                      >
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              <button
+                type="button"
+                className="text-white border border-white focus:ring-6 focus:outline-none font-medium md:rounded-2xl text-sm px-5 py-2 text-center me-2 mb-2 dark:border-white dark:text-white-500"
+                style={{ borderColor: secondaryColor, color: secondaryColor }}
+                onClick={handleSignInClick}
+              >
+                Sign In
+              </button>
+            </div>
+          )}
           <button
             data-collapse-toggle="navbar-cta"
             type="button"
