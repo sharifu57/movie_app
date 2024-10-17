@@ -57,17 +57,24 @@ export default function HomePage() {
             movies.map((movie: any) => (
               <div
                 key={movie.id}
-                className="bg-white  rounded-lg shadow-sm overflow-hidden"
+                className="bg-white rounded-lg shadow-md overflow-hidden group relative"
               >
                 <img
                   className="w-full h-64 object-cover"
                   src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                   alt={movie.title}
                 />
+
                 <div className="p-4">
                   <h2 className="text-lg font-semibold">
                     {movie?.original_title}
                   </h2>
+                </div>
+
+                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="text-white text-lg font-bold">
+                    Rating: {movie?.vote_average}/10
+                  </span>
                 </div>
               </div>
             ))

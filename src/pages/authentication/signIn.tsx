@@ -2,11 +2,20 @@ import { GoogleLogin } from "@react-oauth/google";
 import InputForm from "../../components/forms/inputForm";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
+import FacebookLogin from "react-facebook-login";
 
 export default function SignIn() {
+  const appId = "509962481906337";
   const [user, setUser] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const handleFacebookCallback = (response: any) => {
+    console.log("=======response" + response)
+    if (response?.status === "unknown") {
+      console.error("Sorry!", "Something went wrong with facebook Login.");
+      return;
+    }
+  };
 
   const handleOnSuccessLogin = async (response: any) => {
     try {
@@ -28,6 +37,10 @@ export default function SignIn() {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+
+    console.log("=======user");
+    console.log(user);
+    console.log("=====end user");
   }, []);
 
   return (
@@ -90,7 +103,7 @@ export default function SignIn() {
           </button>
 
           <div className="flex items-center justify-center mt-4">
-            {!user ? (
+            {/* {!user ? (
               <div>
                 {error && <p style={{ color: "red" }}>{error}</p>}
                 <GoogleLogin
@@ -102,7 +115,27 @@ export default function SignIn() {
               </div>
             ) : (
               <div>{user}</div>
-            )}
+            )} */}
+
+            <div>
+              {error && <p style={{ color: "red" }}>{error}</p>}
+              {/* <GoogleLogin
+                  onSuccess={handleOnSuccessLogin}
+                  onError={() => {
+                    console.log("===failed");
+                  }}
+                /> */}
+              <div>
+              {error && <p style={{ color: "red" }}>{error}</p>}
+              <FacebookLogin
+                appId={appId}
+                autoLoad={false}
+                fields="name,email,picture"
+                callback={handleFacebookCallback}
+                buttonStyle={{ padding: "6px" }}
+              />
+            </div>
+            </div>
           </div>
 
           <div className="text-sm font-medium text-gray-500 dark:text-gray-300">

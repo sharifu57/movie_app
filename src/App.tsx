@@ -10,11 +10,14 @@ function App() {
 }
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <GoogleOAuthProvider clientId="846944510671-0b90i3jp6sfgb4umvirb08q1bh27vcd5.apps.googleusercontent.com">
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </GoogleOAuthProvider>
+  // <GoogleOAuthProvider clientId="846944510671-413uuem257ffuctpd7mv9vt76bd6ol99.apps.googleusercontent.com">
+  //   <React.StrictMode>
+  //     <App />
+  //   </React.StrictMode>
+  // </GoogleOAuthProvider>
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 );
 
 export default App;
