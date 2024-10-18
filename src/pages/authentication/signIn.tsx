@@ -10,7 +10,7 @@ export default function SignIn() {
   const navigate = useNavigate()
 
   const handleFacebookCallback = (response: any) => {
-    console.log(response)
+    console.log("===Login Response",response)
     
     if (response['accessToken']) {
       setUser(response);
